@@ -1,97 +1,101 @@
 # Project 02: OSINT Collection and Documentation Baseline
 
-**Level:** Beginner  
-**Track:** Threat Intelligence and Threat Hunting  
-**Project type:** Defensive lab / portfolio exercise
+**Level:** Beginner | **Track:** Threat Intelligence & Threat Hunting
 
-## 1. Objective
-Design and complete a repeatable exercise for **OSINT Collection and Documentation Baseline**. Demonstrate how to collect or inspect relevant security data, preserve provenance, evaluate confidence, document limitations, and turn observations into actionable defensive decisions.
+## Objective
+Complete a repeatable defensive exercise focused on osint collection and documentation baseline. Produce traceable evidence, explain confidence and uncertainty, and turn observations into proportionate defensive improvements.
 
-## 2. Scope and authorization
-Work only with public information collected in accordance with its terms, synthetic datasets, systems you own, or systems covered by explicit written authorization. Do not probe third-party infrastructure, access private accounts, collect credentials, or identify/target private individuals. Keep this exercise offline or within an isolated lab where possible.
+## Scope and authorization
+Use public information in accordance with its terms, synthetic datasets, systems you own, or systems covered by explicit written authorization. Do not access third-party systems, collect credentials, target private individuals, or deploy malware. Keep testing read-only and isolated.
 
-## 3. Prerequisites
-- Kali Linux or a current Linux workstation; Windows is optional for endpoint-log exercises.
-- Python 3.10+ and a virtual environment; Git for version control.
-- A text editor and spreadsheet/JSON viewer.
-- Synthetic logs, benign sample indicators, and a local folder for evidence.
-- Familiarity with DNS, HTTP, authentication logs, and basic networking.
+## Prerequisites
+- Linux/Kali workstation; Windows event sources where relevant.
+- Python 3.10+, Git, editor, JSON/CSV viewer.
+- Synthetic logs, benign indicators, and an evidence folder.
+- Basic DNS, HTTP, authentication, and network telemetry knowledge.
 
-## 4. Lab setup
-1. Create a dedicated project folder with `data/raw`, `data/processed`, `evidence`, `reports`, and `src` directories.
-2. Use synthetic example records (RFC 5737 documentation IP ranges, reserved example domains, and clearly fake hashes). Label every generated record as simulated.
-3. Record the dataset source, collection timestamp, license/terms, transformation steps, and SHA-256 checksum for each input file.
-4. Create a Python virtual environment and install only the libraries needed for parsing and analysis (for example, `requests`, `pandas`, and `stix2` when relevant).
-5. Define a written question or hypothesis before analysis; keep raw inputs immutable.
+## Lab setup
+1. Create `data/raw`, `data/processed`, `src`, `evidence`, and `reports`.
+2. Use labeled synthetic records, reserved example IP ranges, and example domains.
+3. Preserve raw input; record source, license, collection date, and SHA-256.
+4. Create a virtual environment and install only required parsing libraries.
+5. Write the investigation question and hypothesis before analysis.
 
-## 5. Workflow
-1. **Define the question:** State what you need to learn, why it matters to defenders, and what would count as supporting or contradicting evidence.
-2. **Collect safely:** Use approved public documentation, published threat reports, or supplied synthetic lab data. Capture source URL/title, publisher, publication date, access date, and any usage restrictions.
-3. **Normalize:** Convert records into a consistent schema; preserve original values and timestamps. Do not silently discard malformed or conflicting records.
-4. **Enrich and correlate:** Add only relevant context. Track which source supports each attribute and avoid treating a single reputation result as a verdict.
-5. **Analyze:** Compare observations against the hypothesis. Map behavior to MITRE ATT&CK only when the behavior is supported by evidence; record alternative explanations.
-6. **Prioritize:** Assess confidence, relevance, freshness, potential impact, and operational urgency separately.
-7. **Document:** Produce a concise analyst summary, methods, evidence references, limitations, and recommended defensive actions.
-8. **Validate:** Re-run the workflow on a second synthetic dataset and confirm that the same rules produce explainable results.
+## Walkthrough
+1. Frame the defensive question, scope, and evidence that could support or disprove the hypothesis.
+2. Collect approved public reporting, documentation, or synthetic data; record publisher, URL, dates, and restrictions.
+3. Normalize fields while preserving original values, timestamps, and malformed-record details.
+4. Enrich with attributed context; reputation matches are leads, not verdicts.
+5. Correlate independent evidence, document benign explanations, and map ATT&CK only when supported.
+6. Assess confidence, freshness, relevance, and potential impact separately.
+7. Report observations, methods, limitations, evidence references, and defensive actions.
+8. Replay on a second synthetic dataset and verify repeatable, explainable results.
 
-## 6. Commands and tools
-Example safe workspace commands:
-
+## Example commands
 ```bash
-mkdir -p data/{raw,processed} evidence reports src
+mkdir -p data/{raw,processed} src evidence reports
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
+find data/raw -maxdepth 1 -type f -print
 sha256sum data/raw/* 2>/dev/null
 ```
-
-For structured data inspection:
-
+Inspect JSON safely:
 ```bash
 python - <<'PY'
 import json
 from pathlib import Path
-for path in Path("data/raw").glob("*.json"):
-    records = json.loads(path.read_text())
-    print(path.name, "records:", len(records) if isinstance(records, list) else 1)
+for p in Path("data/raw").glob("*.json"):
+    x=json.loads(p.read_text())
+    print(p.name, len(x) if isinstance(x,list) else 1)
 PY
 ```
+Use read-only queries and synthetic inputs; never scan or test assets outside the authorized scope.
 
-Adapt the analysis tooling to the project question. Use read-only queries and synthetic inputs; do not run scans or tests against systems outside the authorized scope.
+## Expected output
+- Reproducible collection/analysis notes and normalized data or query results.
+- Evidence register with provenance, timestamps, confidence, and limitations.
+- Analyst report with question, method, observations, assessment, and next steps.
 
-## 7. Expected output
-- A documented lab layout and reproducible analysis notes.
-- A normalized dataset or clearly described analytical result.
-- An evidence register with source, timestamp, confidence, and limitations.
-- A short report containing the question, method, observations, assessment, and next steps.
-- Three simulated training illustrations: workflow, analysis view, and validation view.
+## Findings and risk assessment
+Record evidence ID, observed fact, source, first/last-seen time, confidence rationale, relevance, impact, and alternative explanation. Separate facts from hypotheses. Discuss false positives and stale-data risks. An IOC match alone does not prove compromise.
 
-## 8. Findings and risk assessment
-For each observation, record: evidence ID, observed fact, source, first-seen/last-seen time, confidence rationale, relevance, potential impact, and alternative explanation. Separate confirmed facts from analyst hypotheses. Explain false-positive risks and stale-data risks. Do not claim a compromise based only on an IOC match or public reputation score.
+## Framework mapping
+Map supported behavior to MITRE ATT&CK where applicable. Use CWE/OWASP only when relevant; record framework version and mapping rationale or mark not applicable.
 
-## 9. Framework mapping
-Where applicable, map supported behavior to **MITRE ATT&CK** tactics/techniques and relevant **CWE/OWASP** categories only when they genuinely fit. For intelligence lifecycle work, document direction, collection, processing, analysis, dissemination, and feedback. Include framework version and mapping rationale.
+## Remediation
+Recommend proportionate actions: validate telemetry, tune detections, review indicators before blocking, improve logging, update playbooks, and communicate uncertainty. Assign owner, priority, and target date.
 
-## 10. Remediation and defensive recommendations
-Recommend proportionate controls based on evidence: validate telemetry, tune detections, block or monitor indicators only after review, improve logging, update playbooks, and communicate uncertainty. Include an owner, priority, and target date for each recommendation.
+## Validation criteria
+- Inputs traceable, checksummed, and labeled as simulated or public-source.
+- Workflow repeatable and outputs explainable.
+- Conclusions link to evidence and state confidence/limitations.
+- Benign explanations and false positives considered.
+- A second analyst can reproduce and validate the recommendations.
 
-## 11. Validation and success criteria
-- Inputs are traceable, checksummed, and clearly labeled as real public source or simulated.
-- The workflow is reproducible and produces consistent output on the supplied test data.
-- Every conclusion links to evidence and explains confidence and limitations.
-- False positives and benign explanations are considered.
-- Recommendations are actionable and can be validated by a second analyst.
-
-## 12. Evidence and reporting checklist
-- [ ] Scope, authorization, and question recorded
-- [ ] Data sources, dates, terms, and checksums documented
+## Evidence and reporting checklist
+- [ ] Scope, authorization, and hypothesis recorded
+- [ ] Sources, dates, terms, and checksums documented
 - [ ] Raw data preserved; transformations repeatable
 - [ ] Findings linked to evidence and confidence rationale
-- [ ] ATT&CK/framework mappings justified or marked not applicable
-- [ ] Recommendations, validation results, and limitations included
+- [ ] Framework mappings justified or N/A
+- [ ] Recommendations and validation documented
 
-## 13. Deliverables
-Commit the sanitized report, scripts, schema, and synthetic sample data to this project folder. Never commit secrets, personal data, customer telemetry, or restricted source content.
+## Training illustrations
 
----
-*Training note: all diagrams in this folder are simulated illustrations, not actual tool screenshots or evidence from a live investigation.*
+**01 — Baseline workflow**
+
+![Project 02 baseline workflow](images/01-baseline.svg)
+
+**02 — Analysis and findings**
+
+![Project 02 analysis and findings](images/02-findings.svg)
+
+**03 — Validation workflow**
+
+![Project 02 validation workflow](images/03-validation.svg)
+
+*These are simulated training illustrations, not actual screenshots or live investigation evidence.*
+
+## Deliverables
+Commit sanitized scripts, schema, synthetic samples, and report. Never commit secrets, personal data, customer telemetry, or restricted content.

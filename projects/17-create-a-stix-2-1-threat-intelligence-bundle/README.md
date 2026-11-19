@@ -56,7 +56,6 @@ Use read-only queries and synthetic inputs; never scan or test assets outside th
 - Reproducible collection/analysis notes and normalized data or query results.
 - Evidence register with provenance, timestamps, confidence, and limitations.
 - Analyst report with question, method, observations, assessment, and next steps.
-- Three project-specific simulated SVG illustrations.
 
 ## Findings and risk assessment
 Record evidence ID, observed fact, source, first/last-seen time, confidence rationale, relevance, impact, and alternative explanation. Separate facts from hypotheses. Discuss false positives and stale-data risks. An IOC match alone does not prove compromise.
@@ -82,8 +81,21 @@ Recommend proportionate actions: validate telemetry, tune detections, review ind
 - [ ] Framework mappings justified or N/A
 - [ ] Recommendations and validation documented
 
+## Training illustrations
+
+**01 — Baseline workflow**
+
+![Project 17 baseline workflow](images/01-baseline.svg)
+
+**02 — Analysis and findings**
+
+![Project 17 analysis and findings](images/02-findings.svg)
+
+**03 — Validation workflow**
+
+![Project 17 validation workflow](images/03-validation.svg)
+
+*These are simulated training illustrations, not actual screenshots or live investigation evidence.*
+
 ## Deliverables
 Commit sanitized scripts, schema, synthetic samples, and report. Never commit secrets, personal data, customer telemetry, or restricted content.
-
----
-*All diagrams are simulated training illustrations—not actual screenshots or live investigation evidence.*
